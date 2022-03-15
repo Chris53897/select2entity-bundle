@@ -323,13 +323,9 @@ Because the handling of requests is usually very similar you can use a service w
 
 ```php
     /**
-     * @param Request $request
-     *
      * @Route("/autocomplete", name="ajax_autocomplete")
-     *
-     * @return Response
      */
-    public function autocompleteAction(Request $request)
+    public function autocompleteAction(Request $request): JsonResponse
     {
         // Check security etc. if needed
     
@@ -411,8 +407,9 @@ You also will need to override the following block in your template:
 This block adds all additional data needed to the JavaScript function `select2entityAjax`, like data attribute. In this case we are passing `data-img`.</details>
 
 ### Themes
-Select2 supports custom themes using the `theme` option so you can style Select2 to match the rest of your application.
+Select2 supports custom themes using the `theme` option, so you can style Select2 to match the rest of your application.
 For Bootstrap4 theme look at https://github.com/ttskch/select2-bootstrap4-theme
+For Bootstrap5 theme look at https://github.com/apalfrey/select2-bootstrap-5-theme
 
 ## Embed Collection Forms
 If you use [Embedded Collection Forms](http://symfony.com/doc/current/cookbook/form/form_collections.html) and [data-prototype](http://symfony.com/doc/current/cookbook/form/form_collections.html#allowing-new-tags-with-the-prototype) to add new elements in your form, you will need the following JavaScript that will listen for adding an element `.select2entity`:
