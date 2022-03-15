@@ -5,8 +5,8 @@ select2entity-bundle
 
 This is a Symfony bundle which enables the popular [Select2](https://select2.github.io) component to be used as a drop-in replacement for a standard entity field on a Symfony form.
 
-It works with Symfony 4 and 5. For Symfony 2 and 3, please use version or 2.x of the bundle.
-For Select2 4.0 and above. For older versions, use version 1.x of the bundle (not compatible with Symfony 5).
+It works with Symfony 5 and 6. For Symfony 4 please use version or 3.x of the bundle.
+For Select2 4.0 and above.
 
 The main feature that this bundle provides compared with the standard Symfony entity field (rendered with a html select) is that the list is retrieved via a remote ajax call. This means that the list can be of almost unlimited size. The only limitation is the performance of the database query or whatever that retrieves the data in the remote web service.
 
@@ -38,16 +38,9 @@ These files live in the Resources/public/js and Resources/public/css folders of 
 
 Alternatively, minified versions of select2.js and select2.css can be loaded from the CloudFlare CDN using the two lines of code given here: [https://select2.github.io](https://select2.github.io). Make sure the script tag comes after where jQuery is loaded. That might be in the page footer.
 
-* Only if you do not use Symfony Flex. Add `tetranz/select2entity-bundle` to your projects `composer.json` "requires" section:
-
-```yaml
-{
-    // ...
-    "require": {
-        // ...
-        "tetranz/select2entity-bundle": "2.*"
-    }
-}
+* Install via composer
+```bash
+  composer require tetranz/select2entity-bundle
 ```
 Note that this only works with Select2 version 4. If you are using Select2 version 3.X please use `"tetranz/select2entity-bundle": "1.*"` in `composer.json`
 
