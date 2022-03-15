@@ -4,6 +4,7 @@ namespace Tetranz\Select2EntityBundle\Service;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
+use JetBrains\PhpStorm\ArrayShape;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,19 +12,15 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class AutocompleteService
 {
-    private FormFactoryInterface $formFactory;
-    private ManagerRegistry $doctrine;
-
-    public function __construct(FormFactoryInterface $formFactory, ManagerRegistry $doctrine)
-    {
-        $this->formFactory = $formFactory;
-        $this->doctrine = $doctrine;
-    }   
+    public function __construct(private FormFactoryInterface $formFactory, private ManagerRegistry $doctrine)
+    {}
 
     /**
-     * @param string|FormTypeInterface $type
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\NoResultException
      */
-    public function getAutocompleteResults(Request $request, $type): array
+    #[ArrayShape(['results' => "array|array[]|null", 'more' => "bool"])]
+    public function getAutocompleteResults(Request $request, string|FormTypeInterface $type): array
     {
         $form = $this->formFactory->create($type);
         $fieldOptions = $form->get($request->get('field_name'))->getConfig()->getOptions();
@@ -66,7 +63,10 @@ class AutocompleteService
         $accessor = PropertyAccess::createPropertyAccessor();
 
         $result['results'] = array_map(function ($item) use ($accessor, $fieldOptions) {
-            return ['id' => $accessor->getValue($item, $fieldOptions['primary_key']), 'text' => $accessor->getValue($item, $fieldOptions['property'])];
+            return [
+                'id'    => $accessor->getValue($item, $fieldOptions['primary_key']),
+                'text'  => $accessor->getValue($item, $fieldOptions['property'])
+            ];
         }, $paginationResults);
 
         return $result;

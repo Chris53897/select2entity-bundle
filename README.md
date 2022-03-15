@@ -20,11 +20,11 @@ Thanks to @ismailbaskin we now have Select2 version 4 compatibility.
 
 This is a form with a single selection field list expanded.
 
-![Single select example](Resources/doc/img/single.png)
+![Single select example](src/Resources/doc/img/single.png)
 
 This is a form with a multiple selection field list expanded.
 
-![Multiple select example](Resources/doc/img/multi.png)
+![Multiple select example](src/Resources/doc/img/multi.png)
 
 ## Installation
 
@@ -38,9 +38,9 @@ These files live in the Resources/public/js and Resources/public/css folders of 
 
 Alternatively, minified versions of select2.js and select2.css can be loaded from the CloudFlare CDN using the two lines of code given here: [https://select2.github.io](https://select2.github.io). Make sure the script tag comes after where jQuery is loaded. That might be in the page footer.
 
-* Add `tetranz/select2entity-bundle` to your projects `composer.json` "requires" section:
+* Only if you do not use Symfony Flex. Add `tetranz/select2entity-bundle` to your projects `composer.json` "requires" section:
 
-```javascript
+```yaml
 {
     // ...
     "require": {

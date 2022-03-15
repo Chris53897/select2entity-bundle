@@ -4,7 +4,6 @@ namespace Tetranz\Select2EntityBundle\Form\Type;
 
 use Tetranz\Select2EntityBundle\Form\DataTransformer\EntitiesToPropertyTransformer;
 use Tetranz\Select2EntityBundle\Form\DataTransformer\EntityToPropertyTransformer;
-
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
@@ -18,17 +17,13 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Select2EntityType extends AbstractType
 {
-    protected ManagerRegistry $registry;
     protected ObjectManager $em;
-    protected RouterInterface $router;
-    protected array $config;
 
-    public function __construct(ManagerRegistry $registry, RouterInterface $router, array $config)
+    public function __construct(protected ManagerRegistry $registry,
+                                protected RouterInterface $router,
+                                protected array           $config)
     {
-        $this->registry = $registry;
         $this->em = $registry->getManager();
-        $this->router = $router;
-        $this->config = $config;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -37,14 +32,14 @@ class Select2EntityType extends AbstractType
         if (isset($options['object_manager'])) {
             $em = $options['object_manager'];
             if (!$em instanceof ObjectManager) {
-                throw new \Exception('The entity manager \'em\' must be an ObjectManager instance');
+                throw new \RuntimeException('The entity manager \'em\' must be an ObjectManager instance');
             }
             // Use the custom manager instead.
             $this->em = $em;
         } else if (isset($this->config['object_manager'])) {
             $em = $this->registry->getManager($this->config['object_manager']);
             if (!$em instanceof ObjectManager) {
-                throw new \Exception('The entity manager \'em\' must be an ObjectManager instance');
+                throw new \RuntimeException('The entity manager \'em\' must be an ObjectManager instance');
             }
             $this->em = $em;
         }
@@ -58,16 +53,16 @@ class Select2EntityType extends AbstractType
         // add custom data transformer
         if ($options['transformer']) {
             if (!is_string($options['transformer'])) {
-                throw new \Exception('The option transformer must be a string');
+                throw new \RuntimeException('The option transformer must be a string');
             }
             if (!class_exists($options['transformer'])) {
-                throw new \Exception('Unable to load class: '.$options['transformer']);
+                throw new \RuntimeException('Unable to load class: '.$options['transformer']);
             }
 
             $transformer = new $options['transformer']($this->em, $options['class'], $options['text_property'], $options['primary_key']);
 
             if (!$transformer instanceof DataTransformerInterface) {
-                throw new \Exception(sprintf('The custom transformer %s must implement "Symfony\Component\Form\DataTransformerInterface"', get_class($transformer)));
+                throw new \RuntimeException(sprintf('The custom transformer %s must implement "Symfony\Component\Form\DataTransformerInterface"', get_class($transformer)));
             }
 
             // add the default data transformer

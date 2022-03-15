@@ -13,43 +13,34 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class EntityToPropertyTransformer implements DataTransformerInterface
 {
-    protected ObjectManager $em;
-    protected string $className;
-    protected ?string $textProperty;
-    protected string $primaryKey;
-    protected string $newTagPrefix;
-    protected $newTagText;
     protected PropertyAccessor $accessor;
 
-    public function __construct(ObjectManager $em, string $class, string $textProperty = null, string $primaryKey = 'id', string $newTagPrefix = '__', $newTagText = ' (NEW)')
+    public function __construct(protected ObjectManager $em,
+                                protected string $className,
+                                protected ?string $textProperty = null,
+                                protected string $primaryKey = 'id',
+                                protected string $newTagPrefix = '__',
+                                protected string $newTagText = ' (NEW)')
     {
-        $this->em = $em;
-        $this->className = $class;
-        $this->textProperty = $textProperty;
-        $this->primaryKey = $primaryKey;
-        $this->newTagPrefix = $newTagPrefix;
-        $this->newTagText = $newTagText;
         $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
      * Transform entity to array
-     *
-     * @param mixed $entity
      */
-    public function transform($entity): array
+    public function transform(mixed $value): array
     {
         $data = array();
-        if (empty($entity)) {
+        if (empty($value)) {
             return $data;
         }
 
         $text = is_null($this->textProperty)
-            ? (string) $entity
-            : $this->accessor->getValue($entity, $this->textProperty);
+            ? (string) $value
+            : $this->accessor->getValue($value, $this->textProperty);
 
-        if ($this->em->contains($entity)) {
-            $value = (string) $this->accessor->getValue($entity, $this->primaryKey);
+        if ($this->em->contains($value)) {
+            $value = (string) $this->accessor->getValue($value, $this->primaryKey);
         } else {
             $value = $this->newTagPrefix . $text;
             $text .= $this->newTagText;
@@ -62,11 +53,8 @@ class EntityToPropertyTransformer implements DataTransformerInterface
 
     /**
      * Transform single id value to an entity
-     *
-     * @param string $value
-     * @return mixed|null|object
      */
-    public function reverseTransform($value)
+    public function reverseTransform(mixed $value): mixed
     {
         if (empty($value)) {
             return null;
@@ -76,6 +64,7 @@ class EntityToPropertyTransformer implements DataTransformerInterface
         $tagPrefixLength = strlen($this->newTagPrefix);
         $cleanValue = substr($value, $tagPrefixLength);
         $valuePrefix = substr($value, 0, $tagPrefixLength);
+
         if ($valuePrefix == $this->newTagPrefix) {
             // In that case, we have a new entry
             $entity = new $this->className;
