@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class AutocompleteService
+readonly class AutocompleteService
 {
     public function __construct(private FormFactoryInterface $formFactory, private ManagerRegistry $doctrine)
     {}
